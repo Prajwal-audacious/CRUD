@@ -4,19 +4,19 @@ import axios from "axios";
 const Todo = () => {
   const [aptdata, setApidata] = useState([]);
   const [input, setInput] = useState({});
-  const [getid, setgetid] = useState("");
+  const [status, updateStatus] = useState(0);
 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get("http://localhost:3333/agent");
         setApidata(data);
-        // console.log(data)
+        console.log(data)
       } catch (error) {
         console.log(error.message);
       }
     })();
-  }, [getid ]);
+  }, [status]);
 
   const getvalue = (e) => {
     const { name, value } = e.target;
@@ -24,38 +24,41 @@ const Todo = () => {
   };
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     try {
+      console.log(input)
       await axios.post(`http://localhost:3333/agent`, input);
     } catch (error) {
       console.log(error.message);
     }
+    updateStatus(status + 1);
   };
 
   const deleteItem = async (e) => {
-    await setgetid(e.target.getAttribute("data-id"));
-    console.log(getid);
+    const id = e.target.getAttribute("data-id");
+    console.log(id);
 
     try {
-      await axios.delete(`http://localhost:3333/agent/${getid}`);
+      await axios.delete(`http://localhost:3333/agent/${id}`);
     } catch (error) {
       console.log(error.message);
     }
-   
+    updateStatus(status + 1);
   };
 
   const editItem = async (e) => {
-    await setgetid(e.target.getAttribute("data-id"));
-    console.log(getid);
+    let id = e.target.getAttribute("data-id");
+
     let data = {
       name: prompt("enter firstname"),
       surname: prompt("enter lastname"),
     };
     try {
-      axios.put(`http://localhost:3333/agent/${getid}`, data);
+      axios.put(`http://localhost:3333/agent/${id}`, data);
     } catch (error) {
       console.log(error.message);
     }
+    updateStatus(status + 1);
   };
 
   // console.log(aptdata)
